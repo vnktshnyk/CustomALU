@@ -23,8 +23,12 @@ module tb ();
   wire [7:0] uio_out;
   wire [7:0] uio_oe;
 
+ 
+   initial clk = 0;
+   always #5 clk = ~clk
+
   // Replace tt_um_example with your module name:
-  tt_um_example user_project (
+  tt_um_adaptuart user_project (
       .ui_in  (ui_in),    // Dedicated inputs
       .uo_out (uo_out),   // Dedicated outputs
       .uio_in (uio_in),   // IOs: Input path
@@ -34,5 +38,39 @@ module tb ();
       .clk    (clk),      // clock
       .rst_n  (rst_n)     // not reset
   );
+  initial begin
+        rst_n = 0;
+        #20;
+        rst_n = 1;
+    end
 
+    // Test sequence
+    initial begin
+        ui_in = 8'b0000_0000;
+
+        @(posedge rst_n);
+        #10;
+
+        // Test 1: Transmit byte 0xA5 (1010_0101)
+        ui_in = 8'b0000_0000; // clear inputs
+        #10;
+        ui_in = 8'b1010_0101; // data = 0xA5, EN=1, IDLE=0
+        ui_in[0] = 1'b1; // ser_en
+        ui_in[1] = 1'b0; // idle_mode
+        #200;
+
+        // Test 2: Repeat the same byte with IDLE = 1 to activate REP_FLAG
+        ui_in = 8'b1010_0101;
+        ui_in[0] = 1'b1; // ser_en
+        ui_in[1] = 1'b1; // idle_mode to allow repeat
+        #200;
+
+        // Test 3: Transmit a new byte (0x3C)
+        ui_in = 8'b0011_1100;
+        ui_in[0] = 1'b1; // ser_en
+        ui_in[1] = 1'b0; // idle_mode
+        #200;
+
+      
+    end
 endmodule
