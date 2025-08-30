@@ -23,70 +23,19 @@ module tt_um_adaptuart (
 
   // List all unused inputs to prevent warnings
   //wire _unused = &{ena, clk, rst_n, 1'b0};
-localparam IDLE = 2'd0;
- localparam LOAD = 2'd1;
- localparam SHIFT = 2'd2;
- reg [1:0] state;
- reg [3:0] sh_cnt;
- wire [11:0] enc_word;
- wire load;
- wire shift_en;
- wire ser_line;
- wire [11:0] rx_word;
- wire sipo_par_en;
- // Encoder: enc_word updated when 'start' asserted
- encoder_adaptive_8b_10b u_enc (
- .clk(clk), .rst_n(rst_n),
- .data_in(data_8b_in),
- .start(start),
- .idle_mode(idle_mode),
- .data_out(enc_word)
- );
- assign encoded_data = enc_word;
- // state machine: IDLE -> LOAD -> SHIFT(n cycles) -> IDLE
- always @(posedge clk or negedge rst_n) begin
- if (!rst_n) begin
- state <= IDLE;
- sh_cnt <= 4'd0;
- end else begin
- case (state)
- IDLE: begin
- if (start) state <= LOAD;
- end
- LOAD: begin
- // load happens in this cycle; begin shifting next cycle
- state <= SHIFT;
- sh_cnt <= 4'd0;
- end
- SHIFT: begin
- // perform 12 shift cycles (count from 0..11)
- if (sh_cnt == 4'd11) state <= IDLE;
- else sh_cnt <= sh_cnt + 1'b1;
- end
- default: state <= IDLE;
- endcase
- end
- end
- assign load = (state == LOAD);
- assign shift_en = (state == SHIFT);
- // PISO loads when 'load' is asserted, shifts when shift_en
- piso_12bit u_piso (
- .clk(clk), .rst_n(rst_n),
- .load(load), .shift_en(shift_en),
- .par_in(enc_word),
- .ser_out(ser_line)
- );
- // SIPO reconstructs and asserts par_en when full
- sipo_12bit u_sipo (
- .clk(clk), .rst_n(rst_n),
- .ser_in(ser_line), .shift_en(shift_en),
- .par_out(rx_word), .par_en(sipo_par_en)
- );
- // Decoder decodes only on par_en
- decoder_adaptive_12b u_dec (
-    .clk(clk), .rst_n(rst_n),
- .data_in(rx_word), .par_en(sipo_par_en),
- .data_out(data_8b_out)
- );
- assign rx_par_en = sipo_par_en;
+    wire start = uio_in[0];
+    wire idle_mode = uio_in[1];
+    wire rx_par_en = uio_oe[5];
+    wire [11:0] encoded_data = { uio_oe[4:0],uio_out[7:0]};
+    
+adaptive_uart_serdes_top uut (
+        .clk(clk)
+        .rst_n(rst_n)
+        .data_8b_in(ui_in),
+        .start(start), // 1-cycle pulse
+        .idle_mode(idle_mode),
+        .data_8b_out(o_out),
+    .encoded_data(encoded_data), // debug
+    .rx_par_en(rx_par_en)
+    );
 endmodule
