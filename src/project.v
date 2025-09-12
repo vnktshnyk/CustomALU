@@ -23,19 +23,78 @@ module tt_um_adaptuart (
 
   // List all unused inputs to prevent warnings
   //wire _unused = &{ena, clk, rst_n, 1'b0};
-    wire start = uio_in[0];
-    wire idle_mode = uio_in[1];
-    wire rx_par_en = uio_oe[5];
-    wire [11:0] encoded_data = { uio_oe[4:0],uio_out[7:0]};
-    
-adaptive_uart_serdes_top uut (
-        .clk(clk)
-        .rst_n(rst_n)
-        .data_8b_in(ui_in),
-        .start(start), // 1-cycle pulse
-        .idle_mode(idle_mode),
-        .data_8b_out(o_out),
-    .encoded_data(encoded_data), // debug
-    .rx_par_en(rx_par_en)
-    );
+wire [3:0] A = ui_in[3:0]; 
+wire [3:0] B = ui_in[7:4]; 
+wire [3:0] Opcode = uio_in[3:0]; 
+reg [3:0] ALU_Result; 
+reg Zero, Carry, Sign, Error; 
+assign uo_out = {Zero, Carry, Sign, Error, ALU_Result}; 
+assign uio_out = 8'b0; 
+assign uio_oe  = 8'b0; 
+always @(*) begin 
+ALU_Result = 4'b0; 
+Zero = 1'b0; 
+Carry = 1'b0; 
+Sign = 1'b0; 
+Error = 1'b0; 
+case (Opcode) 
+4'b0000: begin // Addition 
+{Carry, ALU_Result} = A + B; 
+Zero = (ALU_Result == 4'b0); 
+Sign = ALU_Result[3]; 
+end 
+4'b0001: begin // Subtraction 
+{Carry, ALU_Result} = A - B; 
+Zero = (ALU_Result == 4'b0); 
+Sign = ALU_Result[3]; 
+end 
+4'b0010: begin // Multiplication 
+ALU_Result = A * B; 
+Zero = (ALU_Result == 4'b0); 
+Sign = ALU_Result[3]; 
+end 
+            4'b0011: begin // Division 
+                if (B != 0) begin 
+                    ALU_Result = A / B; 
+                    Zero = (ALU_Result == 4'b0); 
+                    Sign = ALU_Result[3]; 
+                end else begin 
+                    Error = 1'b1; 
+                    Zero = 1'b1; 
+                end 
+            end 
+            4'b0100: ALU_Result = {A[2:0],A[3]};        // Rotate left 
+            4'b0101: ALU_Result = {A[0],A[3:1]};        // Rotate right 
+            4'b0110: begin                              // Priority encoder (A) 
+                if (A[3])      ALU_Result = 4'd3; 
+                else if (A[2]) ALU_Result = 4'd2; 
+                else if (A[1]) ALU_Result = 4'd1; 
+                else if (A[0]) ALU_Result = 4'd0; 
+                else           ALU_Result = 4'd15; // None set 
+            end 
+            4'b0111: ALU_Result = A ^ (A >> 1);         // Gray code of A 
+            4'b1000: ALU_Result = (A & B) | (A & 4'b1010) | (B & 4'b0101); // Majority function (voting-style: 
+sample) 
+            4'b1001: begin                              // Hamming weight (parity detector for even=1) 
+                reg [2:0] ones; 
+                ones = A[0]+A[1]+A[2]+A[3]; 
+                if ((ones == 2) || (ones == 4)) 
+                    ALU_Result = 4'b0001; 
+                else 
+                    ALU_Result = 4'b0000; 
+                Error = (ones == 3 || ones == 1); // flag unexpected weights 
+            end 
+            4'b1010: ALU_Result = A & B;          // AND 
+            4'b1011: ALU_Result = A | B;          // OR 
+            4'b1100: ALU_Result = ~A;             // NOT 
+            4'b1101: ALU_Result = A ^ B;          // XOR 
+            4'b1110: ALU_Result = {3'b0, (A > B)};         // Greater than 
+            4'b1111: ALU_Result = {3'b0, (A == B)};        // Equality 
+            default: begin 
+                ALU_Result = 4'b0000; 
+                Zero = 1'b1; 
+            end 
+        endcase 
+    end  
+    wire _unused = &{ena, clk, rst_n, 1'b0}; 
 endmodule
