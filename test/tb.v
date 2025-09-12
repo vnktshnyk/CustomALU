@@ -51,26 +51,96 @@ module tb ();
         @(posedge rst_n);
         #10;
 
-        // Test 1: Transmit byte 0xA5 (1010_0101)
-        ui_in = 8'b0000_0000; // clear inputs
-        #10;
-        ui_in = 8'b1010_0101; // data = 0xA5, EN=1, IDLE=0
-        ui_in[0] = 1'b1; // ser_en
-        ui_in[1] = 1'b0; // idle_mode
-        #200;
+        initial begin 
+// Initialize inputs 
+ena = 0; 
+clk = 0; 
+rst_n = 1; 
+ui_in = 8'b0; 
+uio_in = 8'b0; 
 
-        // Test 2: Repeat the same byte with IDLE = 1 to activate REP_FLAG
-        ui_in = 8'b1010_0101;
-        ui_in[0] = 1'b1; // ser_en
-        ui_in[1] = 1'b1; // idle_mode to allow repeat
-        #200;
+#10; 
+// Test addition: A=3, B=5, Opcode=0000 (add) 
+ui_in = {4'd5, 4'd3}; // B=5, A=3 
+uio_in = 8'b0000;     // Opcode = 0000 (add) 
+#10; 
 
-        // Test 3: Transmit a new byte (0x3C)
-        ui_in = 8'b0011_1100;
-        ui_in[0] = 1'b1; // ser_en
-        ui_in[1] = 1'b0; // idle_mode
-        #200;
+// Test subtraction: A=7, B=2, Opcode=0001 (sub) 
+ui_in = {4'd2, 4'd7}; 
+uio_in = 8'b0001; 
+#10; 
 
+// Test multiplication: A=4, B=3, Opcode=0010 (mul) 
+ui_in = {4'd3, 4'd4}; 
+uio_in = 8'b0010; 
+#10; 
+
+// Test division: A=8, B=2, Opcode=0011 (div) 
+ui_in = {4'd2, 4'd8}; 
+uio_in = 8'b0011; 
+#10; 
+
+// Test division by zero: A=8, B=0, Opcode=0011 (div) 
+ui_in = {4'd0, 4'd8}; 
+uio_in = 8'b0011; 
+#10; 
+ 
+// Test rotate left: A=9 (1001), Opcode=0100 
+ui_in = {4'd0, 4'd9}; 
+uio_in = 8'b0100; 
+#10; 
+ 
+// Test priority encoder: A=4'b0100, Opcode=0110 
+ui_in = {4'd0, 4'b0100}; 
+uio_in = 8'b0110; 
+#10; 
+
+// Test gray code: A=7 (0111), Opcode=0111 
+ui_in = {4'd0, 4'd7}; 
+uio_in = 8'b0111; 
+#10; 
+
+// Test majority function: A=5 (0101), B=10 (1010), Opcode=1000 
+ui_in = {4'd10, 4'd5}; 
+uio_in = 8'b1000; 
+#10; 
+
+// Test parity detector: A=6 (0110), Opcode=1001 
+ui_in = {4'd0, 4'd6}; 
+uio_in = 8'b1001; 
+#10; 
+ 
+// Test AND: A=12 (1100), B=10 (1010), Opcode=1010 
+ui_in = {4'd10, 4'd12}; 
+uio_in = 8'b1010; 
+#10; 
+
+// Test OR: A=12 (1100), B=10 (1010), Opcode=1011 
+ui_in = {4'd10, 4'd12}; 
+uio_in = 8'b1011; 
+#10; 
+ 
+// Test NOT: A=5 (0101), Opcode=1100 
+ui_in = {4'd0, 4'd5}; 
+uio_in = 8'b1100; 
+#10; 
+
+// Test XOR: A=12 (1100), B=10 (1010), Opcode=1101 
+ui_in = {4'd10, 4'd12}; 
+uio_in = 8'b1101; 
+#10; 
+
+// Test Greater than: A=7, B=5, Opcode=1110 
+ui_in = {4'd5, 4'd7}; 
+uio_in = 8'b1110; 
+#10; 
+
+// Test Equality: A=7, B=7, Opcode=1111 
+ui_in = {4'd7, 4'd7}; 
+uio_in = 8'b1111; 
+#10; 
+ 
+$finish; 
       
     end
 endmodule
