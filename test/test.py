@@ -26,10 +26,18 @@ async def test_project(dut):
     dut._log.info("Test project behavior")
 
     def print_out():
+    # Extract the individual signals from uo_out
+        ALU_Result = dut.uo_out.value[3:0]  # ALU_Result is the lower 4 bits of uo_out
+        Zero = dut.uo_out.value[4]          # Zero is the 5th bit of uo_out
+        Carry = dut.uo_out.value[5]         # Carry is the 6th bit of uo_out
+        Sign = dut.uo_out.value[6]          # Sign is the 7th bit of uo_out
+        Error = dut.uo_out.value[7]         # Error is the 8th bit of uo_out
+        # Log the values
         dut._log.info(
-            f"Result={dut.ALU_Result.value}, Zero={dut.Zero.value}, Carry={dut.Carry.value}, "
-            f"Sign={dut.Sign.value}, Error={dut.Error.value}"
+        f"Result={ALU_Result}, Zero={Zero}, Carry={Carry}, Sign={Sign}, Error={Error}"
         )
+
+    
 
     # Test addition: A=3, B=5, Opcode=0000 (add)
     dut.ui_in.value = (5 << 4) | 3
