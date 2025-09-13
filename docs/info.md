@@ -17,8 +17,7 @@ The  module implements a custom Arithmetic Logic Unit (ALU) with Bit Rotation, P
 
 
 ## How to test
-
-Explain how to use your project
+the lower bits of input is input A and higher bits is input B.The ALu can perform normal Arithmetic and Logical operations in addition to Bit Rotation, Priority Encoder, Gray Code Converter, Majority Function,Parity Detection With Error Flag
 
 ## External hardware
 
