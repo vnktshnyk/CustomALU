@@ -37,7 +37,6 @@ Zero = 1'b0;
 Carry = 1'b0; 
 Sign = 1'b0; 
 Error = 1'b0; 
-ones= 3'b000;
 case (Opcode) 
     4'b0000: begin // Addition 
         {Carry, ALU_Result} = A + B; 
