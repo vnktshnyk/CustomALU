@@ -27,16 +27,18 @@ wire [3:0] A = ui_in[3:0];
 wire [3:0] B = ui_in[7:4]; 
 wire [3:0] Opcode = uio_in[3:0]; 
 reg [3:0] ALU_Result; 
+reg [2:0] ones; // Declare at top with other regs
 reg Zero, Carry, Sign, Error; 
 assign uo_out = {Zero, Carry, Sign, Error, ALU_Result}; 
-assign uio_out = 8'b0; 
-assign uio_oe  = 8'b0; 
+//assign uio_out = 8'b0; 
+//assign uio_oe  = 8'b0; 
 always @(*) begin 
 ALU_Result = 4'b0; 
 Zero = 1'b0; 
 Carry = 1'b0; 
 Sign = 1'b0; 
 Error = 1'b0; 
+ones= 3'b000;
 case (Opcode) 
     4'b0000: begin // Addition 
         {Carry, ALU_Result} = A + B; 
@@ -75,7 +77,7 @@ case (Opcode)
      4'b0111: ALU_Result = A ^ (A >> 1);         // Gray code of A 
      4'b1000: ALU_Result = (A & B) | (A & 4'b1010) | (B & 4'b0101); // Majority function 
      4'b1001: begin                              // Hamming weight (parity detector for even=1) 
-                reg [2:0] ones; 
+               // reg [2:0] ones; 
                 ones = A[0]+A[1]+A[2]+A[3]; 
                 if ((ones == 2) || (ones == 4)) 
                     ALU_Result = 4'b0001; 
@@ -95,5 +97,5 @@ case (Opcode)
         end 
         endcase 
     end  
-    wire _unused = &{ena, clk, rst_n, 1'b0}; 
+    wire _unused = &{ena, clk, rst_n,uio_out,uio_oe, 1'b0}; 
 endmodule
