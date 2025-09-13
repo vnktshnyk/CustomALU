@@ -28,6 +28,9 @@ wire [3:0] B = ui_in[7:4];
 wire [3:0] Opcode = uio_in[3:0]; 
 reg [3:0] ALU_Result; 
 reg Zero, Carry, Sign, Error; 
+parameter MOD_Q    = 17;
+parameter SECRET_S = 3;
+parameter ERROR_E  = 2;
 assign uo_out = {Zero, Carry, Sign, Error, ALU_Result}; 
 //assign uio_out = 8'b0; 
 //assign uio_oe  = 8'b0; 
@@ -74,12 +77,13 @@ case (Opcode)
             end 
      4'b0111: ALU_Result = A ^ (A >> 1);         // Gray code of A 
      4'b1000: ALU_Result = (A & B) | (A & 4'b1010) | (B & 4'b0101); // Majority function 
-      4'b1010: ALU_Result = A & B;          // AND 
-      4'b1011: ALU_Result = A | B;          // OR 
-      4'b1100: ALU_Result = ~A;             // NOT 
-      4'b1101: ALU_Result = A ^ B;          // XOR 
-      4'b1110: ALU_Result = {3'b0, (A > B)};         // Greater than 
-      4'b1111: ALU_Result = {3'b0, (A == B)};        // Equality 
+     4'b1001: ALU_Result = ((A * SECRET_S) + ERROR_E) % MOD_Q;
+     4'b1010: ALU_Result = A & B;          // AND 
+     4'b1011: ALU_Result = A | B;          // OR 
+     4'b1100: ALU_Result = ~A;             // NOT 
+     4'b1101: ALU_Result = A ^ B;          // XOR 
+     4'b1110: ALU_Result = {3'b0, (A > B)};         // Greater than 
+     4'b1111: ALU_Result = {3'b0, (A == B)};        // Equality 
       default: begin 
                 ALU_Result = 4'b0000; 
                 Zero = 1'b1; 
