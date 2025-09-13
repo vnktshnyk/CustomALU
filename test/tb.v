@@ -28,7 +28,7 @@ module tb ();
    always #5 clk = ~clk
 
   // Replace tt_um_example with your module name:
-  tt_um_adaptuart user_project (
+  tt_um_customalu user_project (
       .ui_in  (ui_in),    // Dedicated inputs
       .uo_out (uo_out),   // Dedicated outputs
       .uio_in (uio_in),   // IOs: Input path
@@ -47,11 +47,6 @@ module tb ();
     // Test sequence
     initial begin
         ui_in = 8'b0000_0000;
-
-        @(posedge rst_n);
-        #10;
-
-        initial begin 
 // Initialize inputs 
 ena = 0; 
 clk = 0; 
@@ -139,8 +134,6 @@ uio_in = 8'b1110;
 ui_in = {4'd7, 4'd7}; 
 uio_in = 8'b1111; 
 #10; 
- 
-$finish; 
-      
-    end
+  
+end
 endmodule
