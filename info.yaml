@@ -1,7 +1,7 @@
 # Tiny Tapeout project information
 project:
   title:         "Custom ALU"
-  author:       "Venkatesh A Nayak, Sathyan E N,Pratap C, Sahana M S , Keerthana N,Shylashree N, RV College of Engineering, Bengaluru"   # Your name
+  author:       "Venkatesh A Nayak, Sathyan E N,Prathap C, Sahana M S , Keerthana V,Shylashree N, RV College of Engineering, Bengaluru"   # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "A custom ALU with it Rotation, Priority Encoder, Gray Code Converter, Majority Function,Parity Detection With Error Flag along with regular arithmetic and logical operations "      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
