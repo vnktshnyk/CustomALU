@@ -27,7 +27,7 @@ async def test_project(dut):
 
     def print_out():
         # ALU_Result corresponds to the lower 4 bits (0 to 3) in Little Endian
-        ALU_Result = dut.uo_out.value[3:0+1]  # Access bits 0-3 (lowest 4 bits)
+        ALU_Result = dut.uo_out.value[0:3]  # Access bits 0-3 (lowest 4 bits)
         Zero = dut.uo_out.value[4]             # Zero is bit 4
         Carry = dut.uo_out.value[5]            # Carry is bit 5
         Sign = dut.uo_out.value[6]             # Sign is bit 6
