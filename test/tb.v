@@ -25,7 +25,7 @@ module tb ();
 
  
    initial clk = 0;
-   always #5 clk = ~clk
+   always #5 clk = ~clk;
 
   // Replace tt_um_example with your module name:
   tt_um_customalu user_project (
