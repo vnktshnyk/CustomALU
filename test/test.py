@@ -25,17 +25,19 @@ async def test_project(dut):
 
     dut._log.info("Test project behavior")
 
-    def print_out():
-    # Extract the individual signals from uo_out
-        ALU_Result = dut.uo_out.value[3:0]  # ALU_Result is the lower 4 bits of uo_out
-        Zero = dut.uo_out.value[4]          # Zero is the 5th bit of uo_out
-        Carry = dut.uo_out.value[5]         # Carry is the 6th bit of uo_out
-        Sign = dut.uo_out.value[6]          # Sign is the 7th bit of uo_out
-        Error = dut.uo_out.value[7]         # Error is the 8th bit of uo_out
+   def print_out():
+        # ALU_Result corresponds to the lower 4 bits (0 to 3) in Little Endian
+        ALU_Result = dut.uo_out.value[3:0+1]  # Access bits 0-3 (lowest 4 bits)
+        Zero = dut.uo_out.value[4]             # Zero is bit 4
+        Carry = dut.uo_out.value[5]            # Carry is bit 5
+        Sign = dut.uo_out.value[6]             # Sign is bit 6
+        Error = dut.uo_out.value[7]            # Error is bit 7
+    
         # Log the values
         dut._log.info(
-        f"Result={ALU_Result}, Zero={Zero}, Carry={Carry}, Sign={Sign}, Error={Error}"
+            f"Result={ALU_Result}, Zero={Zero}, Carry={Carry}, Sign={Sign}, Error={Error}"
         )
+
 
     
 
