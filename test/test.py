@@ -142,6 +142,96 @@ async def test_project(dut):
     dut.uio_in.value = 0b1111
     await ClockCycles(dut.clk, 1)
     print_out()
+    
+    ###testcases for NPU
+    dut.ui_in.value = (2 << 4) | 4
+    dut.uio_in.value = 0b00000 | (1 << 4)  # NPU mode
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test ReLU: A=6, B=3, Opcode=0001
+    dut.ui_in.value = (3 << 4) | 6
+    dut.uio_in.value = 0b00001 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test scaled dot product: A=4, B=4, Opcode=0010
+    dut.ui_in.value = (4 << 4) | 4
+    dut.uio_in.value = 0b00010 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test max: A=7, B=5, Opcode=0011
+    dut.ui_in.value = (5 << 4) | 7
+    dut.uio_in.value = 0b00011 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test min: A=3, B=6, Opcode=0100
+    dut.ui_in.value = (6 << 4) | 3
+    dut.uio_in.value = 0b00100 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test threshold: A=5, B ignored, Opcode=0101
+    dut.ui_in.value = (0 << 4) | 5
+    dut.uio_in.value = 0b00101 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test inverted XOR: A=6, B=3, Opcode=0110
+    dut.ui_in.value = (3 << 4) | 6
+    dut.uio_in.value = 0b00110 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test noisy neuron: A=3, B=4, Opcode=0111
+    dut.ui_in.value = (4 << 4) | 3
+    dut.uio_in.value = 0b00111 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test equality neuron: A=5, B=5, Opcode=1000
+    dut.ui_in.value = (5 << 4) | 5
+    dut.uio_in.value = 0b01000 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test sign bit agreement: A=8 (1000), B=0 (0000), Opcode=1010
+    dut.ui_in.value = (0 << 4) | 8
+    dut.uio_in.value = 0b01010 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test sigmoid-like: A=5, Opcode=1011
+    dut.ui_in.value = (0 << 4) | 5
+    dut.uio_in.value = 0b01011 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test fire on diff: A=9, B=3, Opcode=1100
+    dut.ui_in.value = (3 << 4) | 9
+    dut.uio_in.value = 0b01100 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test bitwise weighted sum: A=1011 (11), Opcode=1101
+    dut.ui_in.value = (0 << 4) | 4'b1011
+    dut.uio_in.value = 0b01101 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test quadratic neuron: A=3, B=4, Opcode=1110
+    dut.ui_in.value = (4 << 4) | 3
+    dut.uio_in.value = 0b01110 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
+
+    # Test binary classification: A=9, B=7, Opcode=1111
+    dut.ui_in.value = (7 << 4) | 9
+    dut.uio_in.value = 0b01111 | (1 << 4)
+    await ClockCycles(dut.clk, 1)
+    print_out()
 
     dut._log.info("All tests completed")
 
