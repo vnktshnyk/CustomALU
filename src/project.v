@@ -63,23 +63,23 @@ always @(posedge clk or negedge rst_n) begin
     4'b0000: begin // Addition 
          {Carry, ALU_Result} <= A_reg + B_reg;
          Zero <= ((A_reg + B_reg) == 4'b0);
-         Sign <= (A_reg + B_reg)[3];
+        Sign <= (A_reg + B_reg)>>3;
     end 
     4'b0001: begin // Subtraction 
        {Carry, ALU_Result} <= A_reg - B_reg;
         Zero <= ((A_reg - B_reg) == 4'b0);
-        Sign <= (A_reg - B_reg)[3]; 
+        Sign <= (A_reg - B_reg)>>3; 
     end 
     4'b0010: begin // Multiplication 
         ALU_Result <= A_reg * B_reg;
         Zero <= ((A_reg * B_reg) == 4'b0);
-        Sign <= (A_reg * B_reg)[3];
+        Sign <= (A_reg * B_reg)>>3;
     end 
     4'b0011: begin // Division 
       if (B_reg != 0) begin
           ALU_Result <= A_reg / B_reg;
           Zero <= ((A_reg / B_reg) == 4'b0);
-          Sign <= (A_reg / B_reg)[3];
+          Sign <= (A_reg / B_reg)>>3;
        end else begin
           Error <= 1'b1;
           Zero  <= 1'b1;
