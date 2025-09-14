@@ -41,6 +41,7 @@ end else begin
     Opcode_reg <= uio_in[3:0];
     Mode_reg   <= uio_in[4];
 end
+end    
 
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
