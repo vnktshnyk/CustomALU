@@ -22,6 +22,8 @@ assign uio_oe  = 0;
     
 reg [3:0] A_reg, B_reg, Opcode_reg;
 reg Mode_reg;
+reg [3:0] ALU_Result;
+reg Zero, Carry, Sign, Error;
     
 parameter MOD_Q    = 17;
 parameter WEIGHT_COEFF = 3;
@@ -39,9 +41,6 @@ end else begin
     Opcode_reg <= uio_in[3:0];
     Mode_reg   <= uio_in[4];
 end
-
-reg [3:0] ALU_Result;
-reg Zero, Carry, Sign, Error;
 
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
