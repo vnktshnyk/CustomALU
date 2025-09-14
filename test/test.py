@@ -216,7 +216,7 @@ async def test_project(dut):
     print_out()
 
     # Test bitwise weighted sum: A=1011 (11), Opcode=1101
-    dut.ui_in.value = (0 << 4) | 4'b1011
+    dut.ui_in.value = (0 << 4) | 0b1011
     dut.uio_in.value = 0b01101 | (1 << 4)
     await ClockCycles(dut.clk, 1)
     print_out()
