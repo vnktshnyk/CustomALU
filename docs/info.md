@@ -78,7 +78,7 @@ On the next `clk` cycle:
 
 ---
 
-## 🔣 Operation Modes
+## Operation Modes
 
 ### ALU Mode (`Mode_reg == 0`)
 
@@ -112,9 +112,9 @@ This ensures safe and deterministic startup and operation.
 
 **Testing can be done** by providing various combinations of `ui_in` and `uio_in`, then observing the result and status flags on `uo_out`.
 
-## 🧾 Opcode Table
+## Opcode Table
 
-### 🔧 ALU Mode (`Mode_reg == 0`)
+### ALU Mode (`Mode_reg == 0`)
 
 | Opcode (bin) | Opcode (hex) | Operation         | Description                                               |
 |--------------|--------------|-------------------|-----------------------------------------------------------|
@@ -137,7 +137,7 @@ This ensures safe and deterministic startup and operation.
 
 ---
 
-### 🧠 NPU Mode (`Mode_reg == 1`)
+### NPU Mode (`Mode_reg == 1`)
 
 | Opcode (bin) | Opcode (hex) | Operation               | Description                                                      |
 |--------------|--------------|-------------------------|------------------------------------------------------------------|
